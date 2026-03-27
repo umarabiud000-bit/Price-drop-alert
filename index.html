@@ -1,1 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PriceDrop Alert | Track & Save Smartly</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
+    :root {
+      --bg: #080b18;
+      --bg2: #0d1128;
+      --purple: #7c3aed;
+      --purple-light: #a855f7;
+      --pink: #ec4899;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --card: #111827;
+      --border: rgba(255,255,255,0.08);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* NAVBAR */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 1.5rem;
+      background: rgba(8,11,24,0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      display: flex; align-items: center; gap: 0.5rem;
+      font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem;
+    }
+
+    .logo-icon {
+      width: 32px; height: 32px;
+      background: linear-gradient(135deg, var(--purple), var(--pink));
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.9rem;
+    }
+
+    .nav-links { display: flex; align-items: center; gap: 1rem; }
+    .nav-links a {
+      color: var(--muted); text-decoration: none; font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+
+    .btn-login {
+      background: linear-gradient(135deg, var(--purple), var(--purple-light));
+      color: white; border: none; padding: 0.5rem 1.2rem;
+      border-radius: 8px; font-size: 0.9rem; cursor: pointer;
+      font-family: 'DM Sans', sans-serif; font-weight: 500;
+      transition: opacity 0.2s;
+    }
+    .btn-login:hover { opacity: 0.85; }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center;
+      padding: 6rem 1.5rem 3rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Background glow */
+    .hero::before {
+      content: '';
+      position: absolute;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(124,58,237,0.15) 0%, transparent 70%);
+      top: 50%; left: 50%; transform: translate(-50%, -60%);
+      pointer-events: none;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(236,72,153,0.1) 0%, transparent 70%);
+      bottom: 10%; right: -10%;
+      pointer-events: none;
+    }
+
+    .badge {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      background: rgba(124,58,237,0.15);
+      border: 1px solid rgba(124,58,237,0.3);
+      color: var(--purple-light); padding: 0.4rem 1rem;
+      border-radius: 999px; font-size: 0.8rem;
+      margin-bottom: 1.5rem;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2.2rem, 8vw, 3.5rem);
+      font-weight: 800; line-height: 1.1;
+      margin-bottom: 0.3rem;
+      animation: fadeUp 0.6s 0.1s ease both;
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, var(--purple-light), var(--pink));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      display: block;
+    }
+
+    .hero-sub {
+      color: var(--muted); font-size: 1rem; max-width: 380px;
+      margin: 1.2rem auto 2rem; line-height: 1.6;
+      animation: fadeUp 0.6s 0.2s ease both;
+    }
+
+    /* SEARCH BAR */
+    .search-wrap {
+      width: 100%; max-width: 480px;
+      animation: fadeUp 0.6s 0.3s ease both;
+      position: relative; z-index: 1;
+    }
+
+    .search-box {
+      display: flex; gap: 0;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      border-radius: 12px; overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .search-box:focus-within { border-color: rgba(124,58,237,0.5); }
+
+    .search-box input {
+      flex: 1; background: transparent; border: none; outline: none;
+      color: var(--text); padding: 0.9rem 1rem;
+      font-family: 'DM Sans', sans-serif; font-size: 0.9rem;
+    }
+    .search-box input::placeholder { color: var(--muted); }
+
+    .btn-track {
+      background: linear-gradient(135deg, var(--purple), var(--purple-light));
+      color: white; border: none; padding: 0 1.4rem;
+      font-family: 'Syne', sans-serif; font-weight: 700;
+      font-size: 0.9rem; cursor: pointer; transition: opacity 0.2s;
+      white-space: nowrap;
+    }
+    .btn-track:hover { opacity: 0.85; }
+
+    .hero-note {
+      color: var(--muted); font-size: 0.75rem; margin-top: 0.8rem;
+      animation: fadeUp 0.6s 0.4s ease both;
+    }
+
+    /* STATS */
+    .stats {
+      display: flex; justify-content: center; gap: 2rem;
+      margin-top: 3rem; flex-wrap: wrap;
+      animation: fadeUp 0.6s 0.5s ease both;
+    }
+    .stat { text-align: center; }
+    .stat-num {
+      font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.5rem;
+      background: linear-gradient(135deg, var(--purple-light), var(--pink));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .stat-label { color: var(--muted); font-size: 0.75rem; margin-top: 0.2rem; }
+
+    /* HOW IT WORKS */
+    .section {
+      padding: 4rem 1.5rem;
+      max-width: 600px; margin: 0 auto;
+    }
+
+    .section-tag {
+      color: var(--purple-light); font-size: 0.75rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      margin-bottom: 0.6rem;
+    }
+
+    .section h2 {
+      font-family: 'Syne', sans-serif; font-weight: 800;
+      font-size: clamp(1.6rem, 5vw, 2rem); margin-bottom: 2.5rem;
+    }
+
+    .steps { display: flex; flex-direction: column; gap: 1.2rem; }
+
+    .step {
+      display: flex; gap: 1rem; align-items: flex-start;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px; padding: 1.2rem;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .step:hover { border-color: rgba(124,58,237,0.4); transform: translateX(4px); }
+
+    .step-num {
+      width: 36px; height: 36px; border-radius: 8px; flex-shrink: 0;
+      background: linear-gradient(135deg, var(--purple), var(--purple-light));
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Syne', sans-serif; font-weight: 800; font-size: 0.9rem;
+    }
+
+    .step-content h3 {
+      font-family: 'Syne', sans-serif; font-weight: 700;
+      font-size: 0.95rem; margin-bottom: 0.3rem;
+    }
+    .step-content p { color: var(--muted); font-size: 0.85rem; line-height: 1.5; }
+
+    /* FEATURES */
+    .features { display: grid; gap: 1rem; }
+
+    .feature-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px; padding: 1.2rem;
+      transition: border-color 0.2s;
+    }
+    .feature-card:hover { border-color: rgba(124,58,237,0.4); }
+
+    .feature-icon {
+      font-size: 1.4rem; margin-bottom: 0.6rem;
+    }
+    .feature-card h3 {
+      font-family: 'Syne', sans-serif; font-weight: 700;
+      font-size: 0.95rem; margin-bottom: 0.3rem;
+    }
+    .feature-card p { color: var(--muted); font-size: 0.83rem; line-height: 1.5; }
+
+    /* CTA */
+    .cta-section {
+      padding: 3rem 1.5rem 5rem;
+      text-align: center;
+      max-width: 500px; margin: 0 auto;
+    }
+    .cta-section h2 {
+      font-family: 'Syne', sans-serif; font-weight: 800;
+      font-size: clamp(1.6rem, 5vw, 2rem); margin-bottom: 0.8rem;
+    }
+    .cta-section p { color: var(--muted); font-size: 0.9rem; margin-bottom: 1.5rem; }
+
+    .btn-cta {
+      background: linear-gradient(135deg, var(--purple), var(--pink));
+      color: white; border: none; padding: 0.9rem 2rem;
+      border-radius: 10px; font-family: 'Syne', sans-serif;
+      font-weight: 700; font-size: 1rem; cursor: pointer;
+      transition: opacity 0.2s, transform 0.2s;
+      display: inline-block;
+    }
+    .btn-cta:hover { opacity: 0.9; transform: translateY(-2px); }
+
+    /* FOOTER */
+    footer {
+      text-align: center; padding: 1.5rem;
+      color: var(--muted); font-size: 0.8rem;
+      border-top: 1px solid var(--border);
+    }
+
+    /* MODAL */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);
+      align-items: center; justify-content: center; padding: 1rem;
+    }
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 16px; padding: 1.8rem; width: 100%; max-width: 360px;
+      position: relative;
+    }
+    .modal h3 {
+      font-family: 'Syne', sans-serif; font-weight: 800;
+      font-size: 1.2rem; margin-bottom: 0.4rem;
+    }
+    .modal p { color: var(--muted); font-size: 0.85rem; margin-bottom: 1.2rem; }
+
+    .modal input {
+      width: 100%; background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text); padding: 0.8rem 1rem; font-size: 0.9rem;
+      font-family: 'DM Sans', sans-serif; outline: none;
+      margin-bottom: 0.8rem; transition: border-color 0.2s;
+    }
+    .modal input:focus { border-color: rgba(124,58,237,0.5); }
+
+    .modal-close {
+      position: absolute; top: 1rem; right: 1rem;
+      background: none; border: none; color: var(--muted);
+      font-size: 1.2rem; cursor: pointer;
+    }
+
+    .btn-full {
+      width: 100%;
+      background: linear-gradient(135deg, var(--purple), var(--purple-light));
+      color: white; border: none; padding: 0.85rem;
+      border-radius: 8px; font-family: 'Syne', sans-serif;
+      font-weight: 700; font-size: 0.95rem; cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .btn-full:hover { opacity: 0.85; }
+
+    .success-msg {
+      display: none; text-align: center; padding: 1rem;
+      color: #4ade80; font-size: 0.9rem;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--purple); border-radius: 2px; }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav>
+    <div class="logo">
+      <div class="logo-icon">📉</div>
+      PriceDrop Alert
+    </div>
+    <div class="nav-links">
+      <a href="#how">How it Works</a>
+      <button class="btn-login" onclick="openModal()">Login</button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="badge">✦ Smart Price Tracking Powered by AI</div>
+    <h1>
+      Never Overpay Again
+      <span class="gradient-text">Track &amp; Save Smartly</span>
+    </h1>
+    <p class="hero-sub">
+      Paste any Amazon or Flipkart product link and we'll send you an email alert the moment the price drops.
+    </p>
+
+    <div class="search-wrap">
+      <div class="search-box">
+        <input type="url" id="productUrl" placeholder="Paste Amazon / Flipkart link here...">
+        <button class="btn-track" onclick="handleTrack()">Track</button>
+      </div>
+      <p class="hero-note">Free forever · No credit card needed</p>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-num">50K+</div>
+        <div class="stat-label">Products Tracked</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">₹2Cr+</div>
+        <div class="stat-label">Saved by Users</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">10K+</div>
+        <div class="stat-label">Happy Users</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURED DEALS -->
+  <section class="section" id="deals">
+    <div class="section-tag">🔥 Hot Deals</div>
+    <h2>Featured Products</h2>
+    <div class="features">
+
+      <!-- NOISE AIRBUDS CARD -->
+      <div class="feature-card" style="padding:0; overflow:hidden;">
+        <div style="position:relative;">
+          <img src="https://m.media-amazon.com/images/I/61o5SoUxRHL._SX679_.jpg"
+               alt="Noise Air Buds"
+               style="width:100%; height:180px; object-fit:contain; background:#1a1f35; padding:1rem;">
+          <span style="position:absolute; top:10px; left:10px; background:#ec4899; color:white;
+                       font-size:0.7rem; font-weight:700; padding:0.2rem 0.6rem; border-radius:999px;">
+            🔥 LIMITED DEAL
+          </span>
+        </div>
+        <div style="padding:1rem;">
+          <p style="color:var(--muted); font-size:0.75rem; margin-bottom:0.3rem;">Noise</p>
+          <h3 style="font-family:'Syne',sans-serif; font-weight:700; font-size:0.95rem; margin-bottom:0.6rem;">
+            Noise Air Buds — Truly Wireless Earbuds
+          </h3>
+          <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:0.4rem;">
+            <span style="font-family:'Syne',sans-serif; font-weight:800; font-size:1.2rem;
+                         background:linear-gradient(135deg,#a855f7,#ec4899);
+                         -webkit-background-clip:text; -webkit-text-fill-color:transparent;">
+              ₹7,990
+            </span>
+            <span style="color:var(--muted); text-decoration:line-through; font-size:0.85rem;">₹11,999</span>
+            <span style="background:rgba(74,222,128,0.15); color:#4ade80;
+                         font-size:0.72rem; font-weight:700; padding:0.15rem 0.5rem; border-radius:999px;">
+              33% OFF
+            </span>
+          </div>
+          <p style="color:var(--muted); font-size:0.78rem; margin-bottom:1rem; line-height:1.5;">
+            ✅ Active Noise Cancellation &nbsp;|&nbsp; ✅ 45Hr Battery &nbsp;|&nbsp; ✅ Quad Mic ENC &nbsp;|&nbsp; ✅ Instacharge
+          </p>
+          <div style="display:flex; gap:0.6rem;">
+            <a href="https://amzn.to/4rYtVZs" target="_blank" rel="noopener"
+               style="flex:1; background:linear-gradient(135deg,#7c3aed,#a855f7);
+                      color:white; text-decoration:none; text-align:center;
+                      padding:0.7rem; border-radius:8px; font-family:'Syne',sans-serif;
+                      font-weight:700; font-size:0.85rem; transition:opacity 0.2s;"
+               onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+              🛒 Buy on Amazon
+            </a>
+            <button onclick="openModal()"
+               style="flex:1; background:rgba(124,58,237,0.15); border:1px solid rgba(124,58,237,0.4);
+                      color:#a855f7; padding:0.7rem; border-radius:8px; font-family:'Syne',sans-serif;
+                      font-weight:700; font-size:0.85rem; cursor:pointer; transition:all 0.2s;"
+               onmouseover="this.style.background='rgba(124,58,237,0.25)'"
+               onmouseout="this.style.background='rgba(124,58,237,0.15)'">
+              🔔 Price Alert
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="section" id="how">
+    <div class="section-tag">Simple Process</div>
+    <h2>How It Works</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h3>Paste Product Link</h3>
+          <p>Copy any Amazon or Flipkart product URL and paste it in the search bar above.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h3>Set Your Target Price</h3>
+          <p>Tell us the price you want to pay. We'll monitor it 24/7 automatically.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h3>Get Email Alert</h3>
+          <p>The moment price drops to your target, we instantly send you an email. Buy at the right time!</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="section">
+    <div class="section-tag">Why Choose Us</div>
+    <h2>Everything You Need</h2>
+    <div class="features">
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>Instant Alerts</h3>
+        <p>Get notified within minutes of a price drop. Never miss a deal again.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🛒</div>
+        <h3>Amazon &amp; Flipkart</h3>
+        <p>Track products from both India's biggest shopping platforms in one place.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>Price History</h3>
+        <p>See historical price charts to know if you're really getting a good deal.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔒</div>
+        <h3>100% Free &amp; Safe</h3>
+        <p>No hidden charges. Your data is secure. Unsubscribe anytime.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <h2>Start Saving <span class="gradient-text">Today</span></h2>
+    <p>Join thousands of smart shoppers who never overpay.</p>
+    <button class="btn-cta" onclick="openModal()">Get Started — It's Free</button>
+  </section>
+
+  <footer>
+    © 2025 PriceDrop Alert · Made with ❤️ for smart shoppers
+  </footer>
+
+  <!-- MODAL -->
+  <div class="modal-overlay" id="modal" onclick="closeModalOutside(event)">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <h3>Set Price Alert</h3>
+      <p>Enter your email to receive alerts when price drops.</p>
+      <input type="email" id="emailInput" placeholder="your@email.com">
+      <input type="number" id="targetPrice" placeholder="Target price (₹)">
+      <div id="successMsg" class="success-msg">✅ Alert set! We'll email you when price drops.</div>
+      <button class="btn-full" onclick="setAlert()">Set Alert</button>
+    </div>
+  </div>
+
+  <script>
+    function openModal() {
+      document.getElementById('modal').classList.add('open');
+    }
+    function closeModal() {
+      document.getElementById('modal').classList.remove('open');
+      document.getElementById('successMsg').style.display = 'none';
+    }
+    function closeModalOutside(e) {
+      if (e.target.id === 'modal') closeModal();
+    }
+    function handleTrack() {
+      const url = document.getElementById('productUrl').value.trim();
+      if (!url) { alert('Please paste a product link first!'); return; }
+      if (!url.includes('amazon') && !url.includes('flipkart')) {
+        alert('Please paste an Amazon or Flipkart product link.');
+        return;
+      }
+      openModal();
+    }
+    function setAlert() {
+      const email = document.getElementById('emailInput').value.trim();
+      const price = document.getElementById('targetPrice').value.trim();
+      if (!email || !price) { alert('Please fill all fields!'); return; }
+      document.getElementById('successMsg').style.display = 'block';
+      setTimeout(closeModal, 2500);
+    }
+  </script>
+
+</body>
+  </html>
+  
